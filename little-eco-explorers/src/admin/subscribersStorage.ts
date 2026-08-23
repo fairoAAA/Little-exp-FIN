@@ -1,35 +1,30 @@
-const KEY = "ecokids:newsletter:subscribers";
+import { supabase } from "@/lib/supabaseClient";
 
 export interface Subscriber {
+  id: string;
   email: string;
   date: string;
 }
 
-export function getSubscribers(): Subscriber[] {
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Subscriber[]) : [];
-  } catch {
-    return [];
-  }
+export async function getSubscribers(): Promise<Subscriber[]> {
+  const { data, error } = await supabase
+    .from("subscribers")
+    .select("id, email, created_at")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map((row) => ({ id: row.id, email: row.email, date: row.created_at }));
 }
 
-export function addSubscriber(email: string) {
-  const current = getSubscribers();
-  if (current.some((s) => s.email.toLowerCase() === email.toLowerCase())) return;
-  const next = [...current, { email, date: new Date().toISOString() }];
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {
-    /* no-op */
+export async function addSubscriber(email: string): Promise<{ ok: boolean; error?: string }> {
+  const { error } = await supabase.from("subscribers").insert({ email });
+  if (error) {
+    // unique constraint -> allaqachon obuna bo'lgan
+    if (error.code === "23505") return { ok: true };
+    return { ok: false, error: error.message };
   }
+  return { ok: true };
 }
 
-export function removeSubscriber(email: string) {
-  const next = getSubscribers().filter((s) => s.email !== email);
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {
-    /* no-op */
-  }
+export async function removeSubscriber(id: string): Promise<void> {
+  await supabase.from("subscribers").delete().eq("id", id);
 }
