@@ -52,16 +52,7 @@ const AdminDashboardPage = () => {
         ))}
       </div>
 
-      <div className="bg-card border border-border rounded-2xl p-6">
-        <h2 className="font-display font-bold text-lg mb-3">⚠️ Muhim eslatma</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Bu loyihada backend (server/ma'lumotlar bazasi) yo'q. Shu sababli bu yerda qilgan
-          o'zgarishlaringiz faqat <strong>shu brauzeringizda</strong> saqlanadi va faqat sizga (shu
-          qurilmada) ko'rinadi — boshqa tashrif buyuruvchilar hali ham saytning standart holatini
-          ko'radi. O'zgarishlaringizni <strong>hamma</strong> uchun chiqarish uchun "Eksport / Import"
-          bo'limidan JSON faylni yuklab oling va uni dasturchiga (yoki loyiha kodiga) joylashtiring.
-        </p>
-      </div>
+
     </AdminLayout>
   );
 };
